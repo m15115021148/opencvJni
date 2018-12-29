@@ -103,6 +103,10 @@ vector<UMat> masks(num_images);
 #define CUBIC_LOG_TAG  "OpenCV"
 
 namespace android {
+
+	int checkSupportOpenCL();
+
+	Mat splice_image(const string &img1, const string &img2, Mat frame1, Mat frame2);
 	
 	jdouble playVideo(JNIEnv *env, jobject type,
 								  jstring img1_, jstring img2_,
@@ -192,8 +196,6 @@ namespace android {
 		return time;
 	};
 	
-	int checkSupportOpenCL();
-	
 	int checkSupportOpenCL(){
 		//opencl is support?
 		try {
@@ -237,8 +239,6 @@ namespace android {
 		}
 		return 0;
 	};
-	
-	Mat splice_image(const string &img1, const string &img2, Mat frame1, Mat frame2);
 	
 	Mat splice_image(const string &img1, const string &img2, Mat frame1, Mat frame2){
 double time = getTickCount();
