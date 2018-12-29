@@ -1,6 +1,6 @@
 
-#include <jni.h>
-#include "cubic_log.h"
+#include "JNIHelp.h"
+#include "cubic_inc.h"
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
@@ -102,13 +102,12 @@ vector<UMat> masks(num_images);
 #endif //CUBIC_LOG_TAG
 #define CUBIC_LOG_TAG  "OpenCV"
 
-class Main{
-public:
+namespace android {
 	
-	JNIEXPORT jdouble JNICALL Java_com_sensology_opencv_OpenUtil_playVideo(JNIEnv *env, jobject type,
-													  jstring img1_, jstring img2_,
-                                                      jstring firstPath_, jstring secondPath_,
-                                                      jstring path_) {
+	jdouble playVideo(JNIEnv *env, jobject type,
+								  jstring img1_, jstring img2_,
+								  jstring firstPath_, jstring secondPath_,
+								  jstring path_) {
 		const char *img1 = env->GetStringUTFChars(img1_, 0);
 		const char *img2 = env->GetStringUTFChars(img2_, 0);												  
 		const char *firstPath = env->GetStringUTFChars(firstPath_, 0);
@@ -193,6 +192,8 @@ public:
 		return time;
 	};
 	
+	int checkSupportOpenCL();
+	
 	int checkSupportOpenCL(){
 		//opencl is support?
 		try {
@@ -237,6 +238,7 @@ public:
 		return 0;
 	};
 	
+	Mat splice_image(const string &img1, const string &img2, Mat frame1, Mat frame2);
 	
 	Mat splice_image(const string &img1, const string &img2, Mat frame1, Mat frame2){
 double time = getTickCount();
@@ -755,9 +757,15 @@ double time = getTickCount();
         return empty;
 	};
 	
-	
+	//---jni load--------
+static const JNINativeMethod methodsRx[] = {
+	{"playVideo","(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)D",(void*)playVideo},
 };
 
-
+int register_main(JNIEnv *env){
+	return jniRegisterNativeMethods(env, "com/sensology/opencv/OpenUtil", methodsRx, NELEM(methodsRx) );
+}
+	
+};
 
 
