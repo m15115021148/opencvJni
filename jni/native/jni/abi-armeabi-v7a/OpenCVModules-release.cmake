@@ -85,6 +85,16 @@ set_target_properties(libprotobuf PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS libprotobuf )
 list(APPEND _IMPORT_CHECK_FILES_FOR_libprotobuf "${_IMPORT_PREFIX}/sdk/native/3rdparty/libs/armeabi-v7a/liblibprotobuf.a" )
 
+# Import target "quirc" for configuration "Release"
+set_property(TARGET quirc APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(quirc PROPERTIES
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "C"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/3rdparty/libs/armeabi-v7a/libquirc.a"
+  )
+
+list(APPEND _IMPORT_CHECK_TARGETS quirc )
+list(APPEND _IMPORT_CHECK_FILES_FOR_quirc "${_IMPORT_PREFIX}/sdk/native/3rdparty/libs/armeabi-v7a/libquirc.a" )
+
 # Import target "tegra_hal" for configuration "Release"
 set_property(TARGET tegra_hal APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(tegra_hal PROPERTIES
@@ -134,16 +144,6 @@ set_target_properties(opencv_ml PROPERTIES
 
 list(APPEND _IMPORT_CHECK_TARGETS opencv_ml )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_ml "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_ml.a" )
-
-# Import target "opencv_objdetect" for configuration "Release"
-set_property(TARGET opencv_objdetect APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(opencv_objdetect PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_objdetect.a"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS opencv_objdetect )
-list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_objdetect "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_objdetect.a" )
 
 # Import target "opencv_phase_unwrapping" for configuration "Release"
 set_property(TARGET opencv_phase_unwrapping APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
@@ -195,16 +195,6 @@ set_target_properties(opencv_surface_matching PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS opencv_surface_matching )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_surface_matching "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_surface_matching.a" )
 
-# Import target "opencv_video" for configuration "Release"
-set_property(TARGET opencv_video APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(opencv_video PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_video.a"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS opencv_video )
-list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_video "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_video.a" )
-
 # Import target "opencv_xphoto" for configuration "Release"
 set_property(TARGET opencv_xphoto APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(opencv_xphoto PROPERTIES
@@ -224,16 +214,6 @@ set_target_properties(opencv_dnn PROPERTIES
 
 list(APPEND _IMPORT_CHECK_TARGETS opencv_dnn )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_dnn "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_dnn.a" )
-
-# Import target "opencv_face" for configuration "Release"
-set_property(TARGET opencv_face APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(opencv_face PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_face.a"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS opencv_face )
-list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_face "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_face.a" )
 
 # Import target "opencv_fuzzy" for configuration "Release"
 set_property(TARGET opencv_fuzzy APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
@@ -275,16 +255,6 @@ set_target_properties(opencv_imgcodecs PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS opencv_imgcodecs )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_imgcodecs "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_imgcodecs.a" )
 
-# Import target "opencv_shape" for configuration "Release"
-set_property(TARGET opencv_shape APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(opencv_shape PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_shape.a"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS opencv_shape )
-list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_shape "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_shape.a" )
-
 # Import target "opencv_videoio" for configuration "Release"
 set_property(TARGET opencv_videoio APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(opencv_videoio PROPERTIES
@@ -295,16 +265,6 @@ set_target_properties(opencv_videoio PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS opencv_videoio )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_videoio "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_videoio.a" )
 
-# Import target "opencv_xobjdetect" for configuration "Release"
-set_property(TARGET opencv_xobjdetect APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(opencv_xobjdetect PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_xobjdetect.a"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS opencv_xobjdetect )
-list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_xobjdetect "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_xobjdetect.a" )
-
 # Import target "opencv_highgui" for configuration "Release"
 set_property(TARGET opencv_highgui APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(opencv_highgui PROPERTIES
@@ -314,16 +274,6 @@ set_target_properties(opencv_highgui PROPERTIES
 
 list(APPEND _IMPORT_CHECK_TARGETS opencv_highgui )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_highgui "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_highgui.a" )
-
-# Import target "opencv_superres" for configuration "Release"
-set_property(TARGET opencv_superres APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(opencv_superres PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_superres.a"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS opencv_superres )
-list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_superres "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_superres.a" )
 
 # Import target "opencv_bioinspired" for configuration "Release"
 set_property(TARGET opencv_bioinspired APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
@@ -344,16 +294,6 @@ set_target_properties(opencv_dnn_objdetect PROPERTIES
 
 list(APPEND _IMPORT_CHECK_TARGETS opencv_dnn_objdetect )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_dnn_objdetect "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_dnn_objdetect.a" )
-
-# Import target "opencv_dpm" for configuration "Release"
-set_property(TARGET opencv_dpm APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(opencv_dpm PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_dpm.a"
-  )
-
-list(APPEND _IMPORT_CHECK_TARGETS opencv_dpm )
-list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_dpm "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_dpm.a" )
 
 # Import target "opencv_features2d" for configuration "Release"
 set_property(TARGET opencv_features2d APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
@@ -425,6 +365,16 @@ set_target_properties(opencv_datasets PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS opencv_datasets )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_datasets "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_datasets.a" )
 
+# Import target "opencv_objdetect" for configuration "Release"
+set_property(TARGET opencv_objdetect APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(opencv_objdetect PROPERTIES
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_objdetect.a"
+  )
+
+list(APPEND _IMPORT_CHECK_TARGETS opencv_objdetect )
+list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_objdetect "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_objdetect.a" )
+
 # Import target "opencv_rgbd" for configuration "Release"
 set_property(TARGET opencv_rgbd APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(opencv_rgbd PROPERTIES
@@ -434,6 +384,16 @@ set_target_properties(opencv_rgbd PROPERTIES
 
 list(APPEND _IMPORT_CHECK_TARGETS opencv_rgbd )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_rgbd "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_rgbd.a" )
+
+# Import target "opencv_shape" for configuration "Release"
+set_property(TARGET opencv_shape APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(opencv_shape PROPERTIES
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_shape.a"
+  )
+
+list(APPEND _IMPORT_CHECK_TARGETS opencv_shape )
+list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_shape "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_shape.a" )
 
 # Import target "opencv_stereo" for configuration "Release"
 set_property(TARGET opencv_stereo APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
@@ -455,15 +415,15 @@ set_target_properties(opencv_structured_light PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS opencv_structured_light )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_structured_light "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_structured_light.a" )
 
-# Import target "opencv_tracking" for configuration "Release"
-set_property(TARGET opencv_tracking APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
-set_target_properties(opencv_tracking PROPERTIES
+# Import target "opencv_video" for configuration "Release"
+set_property(TARGET opencv_video APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(opencv_video PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_tracking.a"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_video.a"
   )
 
-list(APPEND _IMPORT_CHECK_TARGETS opencv_tracking )
-list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_tracking "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_tracking.a" )
+list(APPEND _IMPORT_CHECK_TARGETS opencv_video )
+list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_video "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_video.a" )
 
 # Import target "opencv_videostab" for configuration "Release"
 set_property(TARGET opencv_videostab APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
@@ -495,6 +455,16 @@ set_target_properties(opencv_ximgproc PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS opencv_ximgproc )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_ximgproc "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_ximgproc.a" )
 
+# Import target "opencv_xobjdetect" for configuration "Release"
+set_property(TARGET opencv_xobjdetect APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(opencv_xobjdetect PROPERTIES
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_xobjdetect.a"
+  )
+
+list(APPEND _IMPORT_CHECK_TARGETS opencv_xobjdetect )
+list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_xobjdetect "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_xobjdetect.a" )
+
 # Import target "opencv_aruco" for configuration "Release"
 set_property(TARGET opencv_aruco APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(opencv_aruco PROPERTIES
@@ -515,6 +485,26 @@ set_target_properties(opencv_bgsegm PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS opencv_bgsegm )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_bgsegm "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_bgsegm.a" )
 
+# Import target "opencv_dpm" for configuration "Release"
+set_property(TARGET opencv_dpm APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(opencv_dpm PROPERTIES
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_dpm.a"
+  )
+
+list(APPEND _IMPORT_CHECK_TARGETS opencv_dpm )
+list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_dpm "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_dpm.a" )
+
+# Import target "opencv_face" for configuration "Release"
+set_property(TARGET opencv_face APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(opencv_face PROPERTIES
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_face.a"
+  )
+
+list(APPEND _IMPORT_CHECK_TARGETS opencv_face )
+list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_face "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_face.a" )
+
 # Import target "opencv_optflow" for configuration "Release"
 set_property(TARGET opencv_optflow APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(opencv_optflow PROPERTIES
@@ -534,6 +524,26 @@ set_target_properties(opencv_stitching PROPERTIES
 
 list(APPEND _IMPORT_CHECK_TARGETS opencv_stitching )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_stitching "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_stitching.a" )
+
+# Import target "opencv_superres" for configuration "Release"
+set_property(TARGET opencv_superres APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(opencv_superres PROPERTIES
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_superres.a"
+  )
+
+list(APPEND _IMPORT_CHECK_TARGETS opencv_superres )
+list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_superres "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_superres.a" )
+
+# Import target "opencv_tracking" for configuration "Release"
+set_property(TARGET opencv_tracking APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(opencv_tracking PROPERTIES
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_tracking.a"
+  )
+
+list(APPEND _IMPORT_CHECK_TARGETS opencv_tracking )
+list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_tracking "${_IMPORT_PREFIX}/sdk/native/staticlibs/armeabi-v7a/libopencv_tracking.a" )
 
 # Commands beyond this point should not need to know the version.
 set(CMAKE_IMPORT_FILE_VERSION)

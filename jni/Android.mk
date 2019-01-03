@@ -22,6 +22,9 @@ LOCAL_SRC_FILES := onload.cpp \
 
 LOCAL_LDLIBS +=  -lm -llog
 
+#设置可以使用C++代码  
+LOCAL_CPPFLAGS += -std=c++11
+
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/native/jni/include
 
 include $(BUILD_SHARED_LIBRARY)
