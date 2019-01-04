@@ -1091,9 +1091,8 @@ class CV_EXPORTS_W TrackerMIL : public Tracker
   virtual ~TrackerMIL() CV_OVERRIDE {}
 };
 
-/** @brief the Boosting tracker
+/** @brief This is a real-time object tracking based on a novel on-line version of the AdaBoost algorithm.
 
-This is a real-time object tracking based on a novel on-line version of the AdaBoost algorithm.
 The classifier uses the surrounding background as negative examples in update step to avoid the
 drifting problem. The implementation is based on @cite OLB .
  */
@@ -1129,7 +1128,7 @@ class CV_EXPORTS_W TrackerBoosting : public Tracker
   virtual ~TrackerBoosting() CV_OVERRIDE {}
 };
 
-/** @brief the Median Flow tracker
+/** @brief Median Flow tracker implementation.
 
 Implementation of a paper @cite MedianFlow .
 
@@ -1168,9 +1167,7 @@ class CV_EXPORTS_W TrackerMedianFlow : public Tracker
   virtual ~TrackerMedianFlow() CV_OVERRIDE {}
 };
 
-/** @brief the TLD (Tracking, learning and detection) tracker
-
-TLD is a novel tracking framework that explicitly decomposes the long-term tracking task into
+/** @brief TLD is a novel tracking framework that explicitly decomposes the long-term tracking task into
 tracking, learning and detection.
 
 The tracker follows the object from frame to frame. The detector localizes all appearances that
@@ -1178,7 +1175,7 @@ have been observed so far and corrects the tracker if necessary. The learning es
 errors and updates it to avoid these errors in the future. The implementation is based on @cite TLD .
 
 The Median Flow algorithm (see cv::TrackerMedianFlow) was chosen as a tracking component in this
-implementation, following authors. The tracker is supposed to be able to handle rapid motions, partial
+implementation, following authors. Tracker is supposed to be able to handle rapid motions, partial
 occlusions, object absence etc.
  */
 class CV_EXPORTS_W TrackerTLD : public Tracker
@@ -1201,9 +1198,7 @@ class CV_EXPORTS_W TrackerTLD : public Tracker
   virtual ~TrackerTLD() CV_OVERRIDE {}
 };
 
-/** @brief the KCF (Kernelized Correlation Filter) tracker
-
- * KCF is a novel tracking framework that utilizes properties of circulant matrix to enhance the processing speed.
+/** @brief KCF is a novel tracking framework that utilizes properties of circulant matrix to enhance the processing speed.
  * This tracking method is an implementation of @cite KCF_ECCV which is extended to KCF with color-names features (@cite KCF_CN).
  * The original paper of KCF is available at <http://www.robots.ox.ac.uk/~joao/publications/henriques_tpami2015.pdf>
  * as well as the matlab implementation. For more information about KCF with color-names features, please refer to
@@ -1269,9 +1264,7 @@ public:
   virtual ~TrackerKCF() CV_OVERRIDE {}
 };
 
-/** @brief the GOTURN (Generic Object Tracking Using Regression Networks) tracker
-
- *  GOTURN (@cite GOTURN) is kind of trackers based on Convolutional Neural Networks (CNN). While taking all advantages of CNN trackers,
+/** @brief GOTURN (@cite GOTURN) is kind of trackers based on Convolutional Neural Networks (CNN). While taking all advantages of CNN trackers,
  *  GOTURN is much faster due to offline training without online fine-tuning nature.
  *  GOTURN tracker addresses the problem of single target tracking: given a bounding box label of an object in the first frame of the video,
  *  we track that object through the rest of the video. NOTE: Current method of GOTURN does not handle occlusions; however, it is fairly
@@ -1304,10 +1297,9 @@ public:
   virtual ~TrackerGOTURN() CV_OVERRIDE {}
 };
 
-/** @brief the MOSSE (Minimum Output Sum of Squared %Error) tracker
-
-The implementation is based on @cite MOSSE Visual Object Tracking using Adaptive Correlation Filters
-@note this tracker works with grayscale images, if passed bgr ones, they will get converted internally.
+/** @brief the MOSSE tracker
+note, that this tracker works with grayscale images, if passed bgr ones, they will get converted internally.
+@cite MOSSE Visual Object Tracking using Adaptive Correlation Filters
 */
 
 class CV_EXPORTS_W TrackerMOSSE : public Tracker
@@ -1323,8 +1315,7 @@ class CV_EXPORTS_W TrackerMOSSE : public Tracker
 
 /************************************ MultiTracker Class ---By Laksono Kurnianggoro---) ************************************/
 /** @brief This class is used to track multiple objects using the specified tracker algorithm.
-
-* The %MultiTracker is naive implementation of multiple object tracking.
+* The MultiTracker is naive implementation of multiple object tracking.
 * It process the tracked objects independently without any optimization accross the tracked objects.
 */
 class CV_EXPORTS_W MultiTracker : public Algorithm
@@ -1440,9 +1431,7 @@ public:
   std::vector<Scalar> colors;
 };
 
-/** @brief Multi Object %Tracker for TLD.
-
-TLD is a novel tracking framework that explicitly decomposes
+/** @brief Multi Object Tracker for TLD. TLD is a novel tracking framework that explicitly decomposes
 the long-term tracking task into tracking, learning and detection.
 
 The tracker follows the object from frame to frame. The detector localizes all appearances that
@@ -1450,7 +1439,7 @@ have been observed so far and corrects the tracker if necessary. The learning es
 errors and updates it to avoid these errors in the future. The implementation is based on @cite TLD .
 
 The Median Flow algorithm (see cv::TrackerMedianFlow) was chosen as a tracking component in this
-implementation, following authors. The tracker is supposed to be able to handle rapid motions, partial
+implementation, following authors. Tracker is supposed to be able to handle rapid motions, partial
 occlusions, object absence etc.
 
 @sa Tracker, MultiTracker, TrackerTLD
@@ -1471,10 +1460,10 @@ public:
   bool update_opt(InputArray image);
 };
 
-/*********************************** CSRT ************************************/
-/** @brief the CSRT tracker
+//! @}
 
-The implementation is based on @cite Lukezic_IJCV2018 Discriminative Correlation Filter with Channel and Spatial Reliability
+/*********************************** CSRT ************************************/
+/** @brief Discriminative Correlation Filter Tracker with Channel and Spatial Reliability
 */
 class CV_EXPORTS_W TrackerCSRT : public Tracker
 {
@@ -1487,12 +1476,12 @@ public:
     Params();
 
     /**
-    * \brief Read parameters from a file
+    * \brief Read parameters from file
     */
     void read(const FileNode& /*fn*/);
 
     /**
-    * \brief Write parameters to a file
+    * \brief Write parameters from file
     */
     void write(cv::FileStorage& fs) const;
 
@@ -1524,8 +1513,6 @@ public:
     float scale_model_max_area;
     float scale_lr;
     float scale_step;
-
-    float psr_threshold; //!< we lost the target, if the psr is lower than this.
   };
 
   /** @brief Constructor
@@ -1535,12 +1522,11 @@ public:
 
   CV_WRAP static Ptr<TrackerCSRT> create();
 
-  CV_WRAP virtual void setInitialMask(InputArray mask) = 0;
+  virtual void setInitialMask(const Mat mask) = 0;
 
   virtual ~TrackerCSRT() CV_OVERRIDE {}
 };
 
-//! @}
 } /* namespace cv */
 
 #endif

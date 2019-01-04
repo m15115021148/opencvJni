@@ -25,10 +25,10 @@
 #      - OpenCV_INCLUDE_DIRS             : The OpenCV include directories.
 #      - OpenCV_COMPUTE_CAPABILITIES     : The version of compute capability.
 #      - OpenCV_ANDROID_NATIVE_API_LEVEL : Minimum required level of Android API.
-#      - OpenCV_VERSION                  : The version of this OpenCV build: "4.0.1"
-#      - OpenCV_VERSION_MAJOR            : Major version part of OpenCV_VERSION: "4"
-#      - OpenCV_VERSION_MINOR            : Minor version part of OpenCV_VERSION: "0"
-#      - OpenCV_VERSION_PATCH            : Patch version part of OpenCV_VERSION: "1"
+#      - OpenCV_VERSION                  : The version of this OpenCV build: "3.4.3"
+#      - OpenCV_VERSION_MAJOR            : Major version part of OpenCV_VERSION: "3"
+#      - OpenCV_VERSION_MINOR            : Minor version part of OpenCV_VERSION: "4"
+#      - OpenCV_VERSION_PATCH            : Patch version part of OpenCV_VERSION: "3"
 #      - OpenCV_VERSION_STATUS           : Development status of this build: ""
 #
 #    Advanced variables:
@@ -45,10 +45,10 @@
 # ======================================================
 #  Version variables:
 # ======================================================
-SET(OpenCV_VERSION 4.0.1)
-SET(OpenCV_VERSION_MAJOR  4)
-SET(OpenCV_VERSION_MINOR  0)
-SET(OpenCV_VERSION_PATCH  1)
+SET(OpenCV_VERSION 3.4.3)
+SET(OpenCV_VERSION_MAJOR  3)
+SET(OpenCV_VERSION_MINOR  4)
+SET(OpenCV_VERSION_PATCH  3)
 SET(OpenCV_VERSION_TWEAK  0)
 SET(OpenCV_VERSION_STATUS "")
 
@@ -118,8 +118,8 @@ set(OpenCV_SHARED OFF)
 # Enables mangled install paths, that help with side by side installs
 set(OpenCV_USE_MANGLED_PATHS FALSE)
 
-set(OpenCV_LIB_COMPONENTS opencv_imgproc;opencv_flann;opencv_core;opencv_videoio;opencv_imgcodecs;opencv_features2d;opencv_highgui;opencv_photo;opencv_objdetect;opencv_calib3d;opencv_ml;opencv_video;opencv_dnn;opencv_stitching;opencv_line_descriptor;opencv_ximgproc;opencv_plot;opencv_superres;opencv_datasets;opencv_bioinspired;opencv_stereo;opencv_rgbd;opencv_xphoto;opencv_bgsegm;opencv_text;opencv_tracking;opencv_optflow;opencv_xobjdetect;opencv_img_hash;opencv_ccalib;opencv_hfs;opencv_shape;opencv_phase_unwrapping;opencv_face;opencv_dpm;opencv_aruco;opencv_videostab;opencv_saliency;opencv_structured_light;opencv_reg;opencv_xfeatures2d;opencv_surface_matching;opencv_fuzzy;opencv_dnn_objdetect)
-set(OpenCV_INCLUDE_DIRS "${OpenCV_INSTALL_PATH}/sdk/native/jni/include")
+set(OpenCV_LIB_COMPONENTS opencv_imgproc;opencv_flann;opencv_core;opencv_videoio;opencv_superres;opencv_imgcodecs;opencv_features2d;opencv_highgui;opencv_photo;opencv_objdetect;opencv_calib3d;opencv_shape;opencv_ml;opencv_videostab;opencv_video;opencv_dnn;opencv_stitching;opencv_line_descriptor;opencv_ximgproc;opencv_plot;opencv_datasets;opencv_bioinspired;opencv_stereo;opencv_rgbd;opencv_xphoto;opencv_bgsegm;opencv_text;opencv_tracking;opencv_optflow;opencv_xobjdetect;opencv_img_hash;opencv_ccalib;opencv_hfs;opencv_phase_unwrapping;opencv_face;opencv_dpm;opencv_aruco;opencv_saliency;opencv_structured_light;opencv_reg;opencv_xfeatures2d;opencv_surface_matching;opencv_fuzzy;opencv_dnn_objdetect)
+set(OpenCV_INCLUDE_DIRS "${OpenCV_INSTALL_PATH}/sdk/native/jni/include" "${OpenCV_INSTALL_PATH}/sdk/native/jni/include/opencv")
 
 if(NOT TARGET opencv_core)
   include(${CMAKE_CURRENT_LIST_DIR}/OpenCVModules${OpenCV_MODULES_SUFFIX}.cmake)
