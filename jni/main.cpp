@@ -1,4 +1,5 @@
 
+
 #include "JNIHelp.h"
 #include "cubic_inc.h"
 #include <string>
@@ -39,6 +40,7 @@
 using namespace std;
 using namespace cv;
 using namespace cv::detail;
+using namespace cv::ocl;
 
 vector<String> img_names;
 bool preview = false;
@@ -107,6 +109,133 @@ namespace android {
 	int checkSupportOpenCL();
 
 	Mat splice_image(const string &img1, const string &img2, Mat frame1, Mat frame2);
+	
+	jdouble mergeImage(JNIEnv *env, jobject type,
+								  jstring img1_, jstring img2_,
+								  jstring path_) {
+		const char *img1 = env->GetStringUTFChars(img1_, 0);
+		const char *img2 = env->GetStringUTFChars(img2_, 0);												  
+		const char *path = env->GetStringUTFChars(path_, 0);		
+		
+		checkSupportOpenCL();
+		
+		setUseOpenCL(true);
+		
+		double time = getTickCount();	
+		double t_s = getTickCount();
+		
+		vector<UMat>img_names;
+
+		UMat image01 = imread(img1).getUMat(ACCESS_RW);
+		cvtColor(image01, image01, CV_BGRA2BGR);
+
+		UMat image02 = imread(img2).getUMat(ACCESS_RW);
+		cvtColor(image02, image02, CV_BGRA2BGR);
+
+		img_names.push_back(image01);
+		img_names.push_back(image02);
+		
+		Stitcher stitcher = Stitcher::createDefault(true);
+ 
+		// 默认是0.6,最大值1最慢，此方法用于特征点检测阶段，如果找不到特征点，要调高
+		stitcher.setRegistrationResol(0.6);
+	 
+		//stitcher.setSeamEstimationResol(0.1); // 默认是0.1
+		//stitcher.setCompositingResol(-1);     // 默认是-1，用于特征点检测阶段，找不到特征点的话，改-1
+		stitcher.setPanoConfidenceThresh(1);  // 默认是1,见过有设0.6和0.4的
+		stitcher.setWaveCorrection(true);    // 默认是true，为加速选false，表示跳过WaveCorrection步骤
+		//还可以选detail::WAVE_CORRECT_VERT ,波段修正(wave correction)功能（水平方向/垂直方向修正）。因为setWaveCorrection设的false，此语句没用
+		stitcher.setWaveCorrectKind(detail::WAVE_CORRECT_HORIZ);
+	 
+		// 找特征点surf算法，此算法计算量大,但对刚体运动、缩放、环境影响等情况下较为稳定
+		stitcher.setFeaturesFinder(new detail::SurfFeaturesFinder);
+		//stitcher.setFeaturesFinder(new detail::OrbFeaturesFinder);// ORB
+	 
+		// Features matcher which finds two best matches for each feature and leaves the best one only if the ratio between descriptor distances is greater than the threshold match_conf.
+		// match_conf默认是0.65，选太大了没特征点
+		detail::BestOf2NearestMatcher* matcher = new detail::BestOf2NearestMatcher(false, match_conf);
+		stitcher.setFeaturesMatcher(matcher);
+	 
+		// Rotation Estimation,It takes features of all images, pairwise matches between all images and estimates rotations of all cameras.
+		//Implementation of the camera parameters refinement algorithm which minimizes sum of the distances between the rays passing through the camera center and a feature,
+		//这个耗时短
+		stitcher.setBundleAdjuster(new detail::BundleAdjusterRay);
+		//Implementation of the camera parameters refinement algorithm which minimizes sum of the reprojection error squares.
+		//stitcher.setBundleAdjuster(new detail::BundleAdjusterReproj);
+	 
+		//Seam Estimation
+		//Minimum graph cut-based seam estimator
+		//stitcher.setSeamFinder(new detail::GraphCutSeamFinder(detail::GraphCutSeamFinderBase::COST_COLOR));//默认就是这个
+		//stitcher.setSeamFinder(new detail::GraphCutSeamFinder(detail::GraphCutSeamFinderBase::COST_COLOR_GRAD));//GraphCutSeamFinder的第二种形式
+		//啥SeamFinder也不用，Stub seam estimator which does nothing.
+		stitcher.setSeamFinder(new detail::NoSeamFinder);
+		//Voronoi diagram-based seam estimator.
+		//stitcher.setSeamFinder(new detail::VoronoiSeamFinder);
+	 
+		//exposure compensators曝光补偿
+		//stitcher.setExposureCompensator(new detail::BlocksGainCompensator);//默认的就是这个
+		//不要曝光补偿
+		stitcher.setExposureCompensator(new detail::NoExposureCompensator);
+		//Exposure compensator which tries to remove exposure related artifacts by adjusting image intensities
+		//stitcher.setExposureCompensator(new detail::detail::GainCompensator);
+		//Exposure compensator which tries to remove exposure related artifacts by adjusting image block intensities 
+		//stitcher.setExposureCompensator(new detail::detail::BlocksGainCompensator); 
+	 
+		// 边缘Blending
+		//stitcher.setBlender( new detail::MultiBandBlender(false) );// 默认使用这个,use gpu
+		//Simple blender which mixes images at its borders
+		stitcher.setBlender(new detail::FeatherBlender);// 这个简单，耗时少
+	 
+		// 拼接方式，柱面？球面OR平面？默认为球面
+		//stitcher.setWarper(new PlaneWarper);
+		//stitcher.setWarper(new SphericalWarper);
+		//stitcher.setWarper(new CylindricalWarper);
+	 
+		// 开始计算变换
+		Stitcher::Status status = stitcher.estimateTransform(img_names);
+		if (status != Stitcher::OK)
+		{
+			std::cout << "Can't stitch images, error code = " << int(status) << std::endl;
+			LOGE("Can't stitch images, error code = %d",int(status));
+			return -1;
+		}
+		else
+		{
+			std::cout << "Estimate transform complete" << std::endl;
+			LOGE("Estimate transform complete");
+		}
+		
+		
+		
+		int id = 1;
+		
+		while (true) {
+			UMat pano;
+			img_names.clear();
+			
+			img_names.push_back(image01);
+			img_names.push_back(image02);
+			
+			t_s = getTickCount();
+			status = stitcher.composePanorama(img_names,pano);
+			LOGD("match t_s splice time=%f\n", (getTickCount() - t_s)/getTickFrequency());
+			
+			char name[521] = {0};
+			sprintf(name, "%s/image/%0d.jpg", path, id);
+			
+			imwrite(name, pano);
+			
+			id++;
+		}
+	 
+		LOGD("match all time=%f\n", (getTickCount() - time)/getTickFrequency());
+		
+		env->ReleaseStringUTFChars(img1_, img1);
+		env->ReleaseStringUTFChars(img2_, img2);
+		env->ReleaseStringUTFChars(path_, path);
+
+		return time;
+	}
 	
 	jdouble playVideo(JNIEnv *env, jobject type,
 								  jstring img1_, jstring img2_,
@@ -760,6 +889,7 @@ double time = getTickCount();
 	//---jni load--------
 static const JNINativeMethod methodsRx[] = {
 	{"playVideo","(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)D",(void*)playVideo},
+	{"mergeImage","(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)D",(void*)mergeImage},
 };
 
 int register_main(JNIEnv *env){
@@ -767,5 +897,7 @@ int register_main(JNIEnv *env){
 }
 	
 };
+
+
 
 
