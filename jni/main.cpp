@@ -1,5 +1,7 @@
 
 
+
+
 #include "JNIHelp.h"
 #include "cubic_inc.h"
 #include <string>
@@ -60,7 +62,7 @@ bool save_graph = false;
 std::string save_graph_to;
 string warp_type = "spherical";
 int expos_comp_type = ExposureCompensator::GAIN_BLOCKS;
-float match_conf = 0.4f;
+float match_conf = 0.5f;
 string seam_find_type = "gc_color";
 int blend_type = Blender::MULTI_BAND;
 int timelapse_type = Timelapser::AS_IS;
@@ -252,42 +254,36 @@ namespace android {
 		
 		double time = getTickCount();
 		double splice_time = getTickCount();
+		
+		vector<String> fn_left;
+		vector<String> fn_right;
 
-		VideoCapture capture1(firstPath);
-		VideoCapture capture2(secondPath);
+		glob(firstPath, fn_left, false);
+		glob(secondPath, fn_right, false);
+		
+		size_t count = fn_left.size();
 
-		if (!capture1.isOpened() && !capture2.isOpened() ){
-			LOGE("fail open video");
-			return -1;
-		}
-
-		int id = 1;
+		LOGD("read img size = %d",count);
+		
 		Mat merge_frame;
 
-		while (true) {
-			LOGD("start -- read frame =%d",id);
-
+		for (size_t i = 1; i <= count; i++)
+		{
 			Mat frame1,frame2;
-
-			bool b_first = capture1.read(frame1);
-			bool b_second = capture2.read(frame2);
-
-			if (!b_first && !b_second ){
-				LOGE("read mat frame is empty");
-				break;
-			}
+			stringstream str;
+			str << i << ".jpg";
+			string left = firstPath + str.str();
+			string right = secondPath + str.str();
+			
+			frame1 = imread(left);
+			frame2 = imread(right);
 
 			if (frame1.empty() || frame2.empty() ){
 				LOGE("read mat frame is empty");
 				break;
 			}
-			/*
-			char name1[512] = {0};
-			char name2[521] = {0};
-			sprintf(name1, "%s/first/%0d.jpg", CUtil::jstringTostring(env,path).c_str(), id);
-			sprintf(name2, "%s/second/%0d.jpg", CUtil::jstringTostring(env,path).c_str(), id);
-			imwrite(name1, frame1);
-			imwrite(name2, frame2);*/
+			
+			
 			splice_time = getTickCount();
 
 			merge_frame = splice_image(img1,img2,frame1,frame2);
@@ -302,15 +298,11 @@ namespace android {
 			LOGD("splice image splice_time=%f\n", splice_time);
 
 			char name[512] = {0};
-			sprintf(name, "%s/merge/%0d.jpg", path, id);
+			sprintf(name, "%s/merge/%0d.jpg", path, i);
 
 			imwrite(name, merge_frame);
 
-			id++;
-
 		}
-		capture1.release();
-		capture2.release();
 
 		time = getTickCount() - time;
 		time /= getTickFrequency();
@@ -897,6 +889,10 @@ int register_main(JNIEnv *env){
 }
 	
 };
+
+
+
+
 
 
 
