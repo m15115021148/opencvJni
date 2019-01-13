@@ -249,7 +249,11 @@ namespace android {
 		const char *secondPath = env->GetStringUTFChars(secondPath_, 0);
 		const char *path = env->GetStringUTFChars(path_, 0);
 		
-		checkSupportOpenCL();
+		int ret = checkSupportOpenCL();
+
+		if (ret == 0){
+			cv::ocl::setUseOpenCL(true);
+		}
 		
 		
 		double time = getTickCount();
