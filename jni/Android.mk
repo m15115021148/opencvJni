@@ -16,9 +16,7 @@ endif
 #opecv end
 
 LOCAL_MODULE := OpenCV
-LOCAL_SRC_FILES := onload.cpp \
-			JNIHelp.cpp \
-			main.cpp
+LOCAL_SRC_FILES := coreApp.cpp
 
 LOCAL_LDLIBS +=  -lm -llog
 
