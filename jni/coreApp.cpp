@@ -1,4 +1,3 @@
-
 #include <jni.h>
 #include "cubic_inc.h"
 #include <stdio.h>
@@ -59,7 +58,7 @@ bool save_graph = false;
 std::string save_graph_to;
 string warp_type = "spherical";
 int expos_comp_type = ExposureCompensator::GAIN_BLOCKS;
-float match_conf = 0.5f;
+float match_conf = 0.4f;
 string seam_find_type = "gc_color";
 int blend_type = Blender::MULTI_BAND;
 int timelapse_type = Timelapser::AS_IS;
@@ -106,147 +105,20 @@ vector<UMat> masks(num_images);
 
 int checkSupportOpenCL();
 
+void cut_img(Mat src_img, int m, int n, vector<Mat> ceil_img);
+
 Mat splice_image(const string &img1, const string &img2, Mat frame1, Mat frame2);
-
-jdouble mergeImage(JNIEnv *env, jobject type,
-							  jstring img1_, jstring img2_,
-							  jstring path_) {
-	const char *img1 = env->GetStringUTFChars(img1_, 0);
-	const char *img2 = env->GetStringUTFChars(img2_, 0);												  
-	const char *path = env->GetStringUTFChars(path_, 0);		
-	
-	checkSupportOpenCL();
-	
-	setUseOpenCL(true);
-	
-	double time = getTickCount();	
-	double t_s = getTickCount();
-	
-	vector<UMat>img_names;
-
-	UMat image01 = imread(img1).getUMat(ACCESS_RW);
-	cvtColor(image01, image01, CV_BGRA2BGR);
-
-	UMat image02 = imread(img2).getUMat(ACCESS_RW);
-	cvtColor(image02, image02, CV_BGRA2BGR);
-
-	img_names.push_back(image01);
-	img_names.push_back(image02);
-	
-	Stitcher stitcher = Stitcher::createDefault(true);
-
-	// 默认是0.6,最大值1最慢，此方法用于特征点检测阶段，如果找不到特征点，要调高
-	stitcher.setRegistrationResol(0.6);
- 
-	//stitcher.setSeamEstimationResol(0.1); // 默认是0.1
-	//stitcher.setCompositingResol(-1);     // 默认是-1，用于特征点检测阶段，找不到特征点的话，改-1
-	stitcher.setPanoConfidenceThresh(1);  // 默认是1,见过有设0.6和0.4的
-	stitcher.setWaveCorrection(true);    // 默认是true，为加速选false，表示跳过WaveCorrection步骤
-	//还可以选detail::WAVE_CORRECT_VERT ,波段修正(wave correction)功能（水平方向/垂直方向修正）。因为setWaveCorrection设的false，此语句没用
-	stitcher.setWaveCorrectKind(detail::WAVE_CORRECT_HORIZ);
- 
-	// 找特征点surf算法，此算法计算量大,但对刚体运动、缩放、环境影响等情况下较为稳定
-	stitcher.setFeaturesFinder(new detail::SurfFeaturesFinder);
-	//stitcher.setFeaturesFinder(new detail::OrbFeaturesFinder);// ORB
- 
-	// Features matcher which finds two best matches for each feature and leaves the best one only if the ratio between descriptor distances is greater than the threshold match_conf.
-	// match_conf默认是0.65，选太大了没特征点
-	detail::BestOf2NearestMatcher* matcher = new detail::BestOf2NearestMatcher(false, match_conf);
-	stitcher.setFeaturesMatcher(matcher);
- 
-	// Rotation Estimation,It takes features of all images, pairwise matches between all images and estimates rotations of all cameras.
-	//Implementation of the camera parameters refinement algorithm which minimizes sum of the distances between the rays passing through the camera center and a feature,
-	//这个耗时短
-	stitcher.setBundleAdjuster(new detail::BundleAdjusterRay);
-	//Implementation of the camera parameters refinement algorithm which minimizes sum of the reprojection error squares.
-	//stitcher.setBundleAdjuster(new detail::BundleAdjusterReproj);
- 
-	//Seam Estimation
-	//Minimum graph cut-based seam estimator
-	//stitcher.setSeamFinder(new detail::GraphCutSeamFinder(detail::GraphCutSeamFinderBase::COST_COLOR));//默认就是这个
-	//stitcher.setSeamFinder(new detail::GraphCutSeamFinder(detail::GraphCutSeamFinderBase::COST_COLOR_GRAD));//GraphCutSeamFinder的第二种形式
-	//啥SeamFinder也不用，Stub seam estimator which does nothing.
-	stitcher.setSeamFinder(new detail::NoSeamFinder);
-	//Voronoi diagram-based seam estimator.
-	//stitcher.setSeamFinder(new detail::VoronoiSeamFinder);
- 
-	//exposure compensators曝光补偿
-	//stitcher.setExposureCompensator(new detail::BlocksGainCompensator);//默认的就是这个
-	//不要曝光补偿
-	stitcher.setExposureCompensator(new detail::NoExposureCompensator);
-	//Exposure compensator which tries to remove exposure related artifacts by adjusting image intensities
-	//stitcher.setExposureCompensator(new detail::detail::GainCompensator);
-	//Exposure compensator which tries to remove exposure related artifacts by adjusting image block intensities 
-	//stitcher.setExposureCompensator(new detail::detail::BlocksGainCompensator); 
- 
-	// 边缘Blending
-	//stitcher.setBlender( new detail::MultiBandBlender(false) );// 默认使用这个,use gpu
-	//Simple blender which mixes images at its borders
-	stitcher.setBlender(new detail::FeatherBlender);// 这个简单，耗时少
- 
-	// 拼接方式，柱面？球面OR平面？默认为球面
-	//stitcher.setWarper(new PlaneWarper);
-	//stitcher.setWarper(new SphericalWarper);
-	//stitcher.setWarper(new CylindricalWarper);
- 
-	// 开始计算变换
-	Stitcher::Status status = stitcher.estimateTransform(img_names);
-	if (status != Stitcher::OK)
-	{
-		std::cout << "Can't stitch images, error code = " << int(status) << std::endl;
-		LOGE("Can't stitch images, error code = %d",int(status));
-		return -1;
-	}
-	else
-	{
-		std::cout << "Estimate transform complete" << std::endl;
-		LOGE("Estimate transform complete");
-	}
-	
-	
-	
-	int id = 1;
-	
-	while (true) {
-		UMat pano;
-		img_names.clear();
-		
-		img_names.push_back(image01);
-		img_names.push_back(image02);
-		
-		t_s = getTickCount();
-		status = stitcher.composePanorama(img_names,pano);
-		LOGD("match t_s splice time=%f\n", (getTickCount() - t_s)/getTickFrequency());
-		
-		char name[521] = {0};
-		sprintf(name, "%s/image/%0d.jpg", path, id);
-		
-		imwrite(name, pano);
-		
-		id++;
-	}
- 
-	LOGD("match all time=%f\n", (getTickCount() - time)/getTickFrequency());
-	
-	env->ReleaseStringUTFChars(img1_, img1);
-	env->ReleaseStringUTFChars(img2_, img2);
-	env->ReleaseStringUTFChars(path_, path);
-
-	return time;
-}
 
 jdouble playVideo(JNIEnv *env, jobject type,
 							  jstring img1_, jstring img2_,
-							  jstring firstPath_, jstring secondPath_,
+							  jstring videoPath_,
 							  jstring path_) {
 	const char *img1 = env->GetStringUTFChars(img1_, 0);
 	const char *img2 = env->GetStringUTFChars(img2_, 0);												  
-	const char *firstPath = env->GetStringUTFChars(firstPath_, 0);
-	const char *secondPath = env->GetStringUTFChars(secondPath_, 0);
+	const char *videoPath = env->GetStringUTFChars(videoPath_, 0);
 	const char *path = env->GetStringUTFChars(path_, 0);
 	
-	LOGD("img1 path : %s",img1);
-	LOGD("img2 path : %s",img2);
+	LOGD("video path --> %s",videoPath);
 	
 	int ret = checkSupportOpenCL();
 
@@ -254,88 +126,58 @@ jdouble playVideo(JNIEnv *env, jobject type,
 		cv::ocl::setUseOpenCL(true);
 	}
 	
-	
 	double time = getTickCount();
-	double splice_time = getTickCount();
-	double same_time = getTickCount();
-	
-	vector<String> fn_left;
-	vector<String> fn_right;
 
-	glob(firstPath, fn_left, false);
-	glob(secondPath, fn_right, false);
-	
-	size_t count = fn_left.size();
-	
-	size_t index = fn_left.size() - 100;
+	VideoCapture capture(videoPath);
 
-	LOGD("read img size = %d",count);
-	
+	if (!capture.isOpened()){
+		LOGE("fail open video");
+		return -1;
+	}
+
+	int id = 1;
 	Mat merge_frame;
-	
-	size_t n = 1;
+	vector<Mat> cut_frame;
 
-	for (size_t i = 1; i <= count*100000; i++)
-	{
-		Mat frame1,frame2;
-		stringstream str;
-		str << i << ".jpg";
-		string left = firstPath + str.str();
-		string right = secondPath + str.str();
-		
-		frame1 = imread(left);
-		frame2 = imread(right);
+	while (true) {
+		LOGD("start --> read frame =%d",id);
 
-		if (frame1.empty() || frame2.empty() ){
+		Mat frame;
+		cut_frame.clear();
+
+		bool f_success = capture.read(frame);
+
+		if (!f_success){
 			LOGE("read mat frame is empty");
 			break;
 		}
 		
-		
-		splice_time = getTickCount();
-		
-		if (i == index){
-			same_time = getTickCount();
-		}
-		
+		cut_img(frame,1,2,cut_frame);
 
-		merge_frame = splice_image(img1,img2,frame1,frame2);
-		
-		if (i == count ) {
-			same_time = getTickCount() - same_time;
-			same_time /= getTickFrequency();
-			LOGD("same 100 image same_time=%f\n ", same_time);
-			i = 1;
-		}
+		merge_frame = splice_image(img1,img2,cut_frame[0],cut_frame[1]);
 
 		if (merge_frame.empty() ){
 		   LOGE("splice image is empty...");
 		   return -1;
 		}
-
-		splice_time = getTickCount() - splice_time;
-		splice_time /= getTickFrequency();
-		LOGD("splice image splice_time=%f\n", splice_time);
-
+		
 		char name[512] = {0};
-		sprintf(name, "%s/merge/%0d.jpg", path, n);
+		sprintf(name, "%s/merge/%0d.jpg", path, id);
 
 		imwrite(name, merge_frame);
-		
-		n++;
+
+		id++;
 
 	}
+	capture.release();
 
 	time = getTickCount() - time;
 	time /= getTickFrequency();
 	LOGD("match end time=%f\n", time);
-	
-	LOGD("before 100 all time=%f\n",same_time);
-	
+		
 	env->ReleaseStringUTFChars(img1_, img1);
 	env->ReleaseStringUTFChars(img2_, img2);
-	env->ReleaseStringUTFChars(firstPath_, firstPath);
-	env->ReleaseStringUTFChars(secondPath_, secondPath);
+	env->ReleaseStringUTFChars(videoPath_, videoPath);
 	env->ReleaseStringUTFChars(path_, path);
 
 	return time;
@@ -384,6 +226,43 @@ int checkSupportOpenCL(){
 	}
 	return 0;
 };
+
+
+/**
+*	Cut an image into m*n patch
+*	m*n  
+*/
+void cut_img(Mat src_img, int m, int n, vector<Mat> ceil_img)
+{
+    int t = m * n;
+    int height = src_img.rows;
+    int width = src_img.cols;
+
+    int ceil_height = height / m;
+    int ceil_width = width / n;
+    Mat roi_img;
+    //String concatenation
+    ostringstream oss;
+    string  str, str1, str2;
+
+    Point p1, p2;
+    for (int i = 0; i<m; i++)
+    {
+        for (int j = 0; j<n; j++)
+        {
+            Rect rect(j*ceil_width, i*ceil_height, ceil_width, ceil_height);
+            src_img(rect).copyTo(roi_img);
+            ceil_img.push_back(roi_img);
+
+			IplImage temp = (IplImage)roi_img;
+            IplImage *ipl_roi_img=&temp;
+            //save processed img
+            char tmp[100]="\0";
+            sprintf(tmp,"..\\post_img\\71253_%d_%d.jpg",i,j);
+            cvSaveImage(tmp,ipl_roi_img);
+        }
+    }
+}
 
 Mat splice_image(const string &img1, const string &img2, Mat frame1, Mat frame2){
 double time = getTickCount();
@@ -906,8 +785,7 @@ if(!initialized_already)
 JNIEXPORT const char *classPathNameRx = "com/sensology/opencv/OpenUtil";
 
 static JNINativeMethod methodsRx[] = { 
-	{"playVideo","(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)D",(void*)playVideo},
-	{"mergeImage","(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)D",(void*)mergeImage},
+	{"playVideo","(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)D",(void*)playVideo},
 };
 
 static jint registerNativeMethods(JNIEnv* env, const char* className,JNINativeMethod* gMethods, int numMethods){
