@@ -281,11 +281,12 @@ namespace android {
 				LOGE("read mat frame is empty");
 				break;
 			}
+			
 			/*
 			char name1[512] = {0};
 			char name2[521] = {0};
-			sprintf(name1, "%s/first/%0d.jpg", CUtil::jstringTostring(env,path).c_str(), id);
-			sprintf(name2, "%s/second/%0d.jpg", CUtil::jstringTostring(env,path).c_str(), id);
+			sprintf(name1, "%s/first/%0d.jpg", path, id);
+			sprintf(name2, "%s/second/%0d.jpg", path, id);
 			imwrite(name1, frame1);
 			imwrite(name2, frame2);*/
 			splice_time = getTickCount();
