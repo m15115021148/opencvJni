@@ -253,13 +253,15 @@ void cut_img(Mat src_img, int m, int n, vector<Mat> ceil_img)
             Rect rect(j*ceil_width, i*ceil_height, ceil_width, ceil_height);
             src_img(rect).copyTo(roi_img);
             ceil_img.push_back(roi_img);
-
+			
+			/*
 			IplImage temp = (IplImage)roi_img;
             IplImage *ipl_roi_img=&temp;
             //save processed img
+			
             char tmp[100]="\0";
             sprintf(tmp,"..\\post_img\\71253_%d_%d.jpg",i,j);
-            cvSaveImage(tmp,ipl_roi_img);
+            cvSaveImage(tmp,ipl_roi_img);*/
         }
     }
 }
