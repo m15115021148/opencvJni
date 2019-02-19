@@ -105,7 +105,7 @@ vector<UMat> masks(num_images);
 
 int checkSupportOpenCL();
 
-void cut_img(Mat src_img, int m, int n, vector<Mat> ceil_img);
+void cut_img(Mat src_img, int m, int n, vector<Mat> ceil_img,const char *path);
 
 Mat splice_image(const string &img1, const string &img2, Mat frame1, Mat frame2);
 
@@ -152,8 +152,8 @@ jdouble playVideo(JNIEnv *env, jobject type,
 			break;
 		}
 		
-		cut_img(frame,1,2,cut_frame);
-
+		cut_img(frame,1,2,cut_frame,path);
+		
 		merge_frame = splice_image(img1,img2,cut_frame[0],cut_frame[1]);
 
 		if (merge_frame.empty() ){
@@ -164,7 +164,7 @@ jdouble playVideo(JNIEnv *env, jobject type,
 		char name[512] = {0};
 		sprintf(name, "%s/merge/%0d.jpg", path, id);
 
-		imwrite(name, merge_frame);
+		imwrite(name, frame);
 
 		id++;
 
@@ -232,7 +232,7 @@ int checkSupportOpenCL(){
 *	Cut an image into m*n patch
 *	m*n  
 */
-void cut_img(Mat src_img, int m, int n, vector<Mat> ceil_img)
+void cut_img(Mat src_img, int m, int n, vector<Mat> ceil_img,const char *path)
 {
     int t = m * n;
     int height = src_img.rows;
@@ -254,14 +254,10 @@ void cut_img(Mat src_img, int m, int n, vector<Mat> ceil_img)
             src_img(rect).copyTo(roi_img);
             ceil_img.push_back(roi_img);
 			
-			/*
-			IplImage temp = (IplImage)roi_img;
-            IplImage *ipl_roi_img=&temp;
-            //save processed img
-			
-            char tmp[100]="\0";
-            sprintf(tmp,"..\\post_img\\71253_%d_%d.jpg",i,j);
-            cvSaveImage(tmp,ipl_roi_img);*/
+			char name[512] = {0};
+			sprintf(name, "%s/cut/%0d.jpg", path, i+j);
+
+			imwrite(name, roi_img);
         }
     }
 }
