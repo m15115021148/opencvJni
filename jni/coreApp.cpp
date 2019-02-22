@@ -279,7 +279,7 @@ jdouble playVideo(JNIEnv *env, jobject type,
 	{
 		Mat frame1,frame2;
 		stringstream str;
-		str << i << ".jpg";
+		str << i << ".png";
 		string left = firstPath + str.str();
 		string right = secondPath + str.str();
 		
@@ -318,7 +318,7 @@ jdouble playVideo(JNIEnv *env, jobject type,
 		LOGD("splice image splice_time=%f\n", splice_time);
 
 		char name[512] = {0};
-		sprintf(name, "%s/merge/%0d.jpg", path, n);
+		sprintf(name, "%s/merge/%0d.png", path, n);
 
 		imwrite(name, merge_frame);
 		
