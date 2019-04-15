@@ -78,7 +78,7 @@
 /* #undef HAVE_EIGEN */
 
 /* FFMpeg video library */
-/* #undef HAVE_FFMPEG */
+#define HAVE_FFMPEG
 
 /* Geospatial Data Abstraction Library */
 /* #undef HAVE_GDAL */
@@ -172,7 +172,7 @@
 /* #undef HAVE_QTKIT */
 
 /* Intel Threading Building Blocks */
-/* #undef HAVE_TBB */
+#define HAVE_TBB
 
 /* TIFF codec */
 #define HAVE_TIFF

@@ -151,7 +151,8 @@ jdouble playVideo(JNIEnv *env, jobject type,
 			LOGE("read mat frame is empty");
 			break;
 		}
-		
+
+		/*
 		cut_img(frame,1,2,cut_frame,path);
 		
 		merge_frame = splice_image(img1,img2,cut_frame[0],cut_frame[1]);
@@ -159,10 +160,12 @@ jdouble playVideo(JNIEnv *env, jobject type,
 		if (merge_frame.empty() ){
 		   LOGE("splice image is empty...");
 		   return -1;
-		}
+		}*/
 		
 		char name[512] = {0};
 		sprintf(name, "%s/merge/%0d.jpg", path, id);
+
+		LOGE("save frame path-> %s",name);
 
 		imwrite(name, frame);
 
